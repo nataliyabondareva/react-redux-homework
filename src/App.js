@@ -1,24 +1,5 @@
-import React from 'react';
-import './App.css';
-
-
-
-export default class DropdownMenu extends React.Component {
-  state = []
-  render() {
-    return (
-      <div className="choose-car">
-        <form>
-          <label>
-            Car:
-            <input type="text" name="name" />
-          </label>
-          <input type="submit" value="Add" />
-        </form>
-      </div>
-    )
-  }
-}
+import React from "react";
+import "./App.css";
 
 const data = {
   "Ivel Z3": {
@@ -40,6 +21,25 @@ const data = {
     manufacturer: "Commodore",
     year: 1982,
     origin: "USA"
+  }
+};
+
+const computers = Object.entries(data);
+
+export default class DropdownMenu extends React.Component {
+  render() {
+    return (
+      <form>
+        <label>Pick a car: </label>
+        <select>
+          {computers.map(computer => (
+            <option key={computer} onClick={() => computer}>
+              {this.computer} 
+            </option>
+          ))}
+        </select>
+      </form>
+    );
   }
 }
 
