@@ -1,5 +1,8 @@
+import { connect } from "react-redux";
 import React from "react";
 import "./App.css";
+import store, { addComputer } from "./store";
+const redux = require("redux");
 
 const data = {
   "Ivel Z3": {
@@ -26,21 +29,72 @@ const data = {
 
 const computers = Object.entries(data);
 
-export default class DropdownMenu extends React.Component {
+class DropdownMenu extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { selectedComputer: {} };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  updateSelection = event => {
+    this.setState({ value: event.target.value });
+    this.setState({
+      selectedComputer: {
+        name: event.target.value,
+        ...data[event.target.value]
+      }
+    });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+    const value = this.state.selectedComputer;
+    this.props.addComputer(value);
+  };
+
   render() {
     return (
-      <form>
-        <label>Pick a car: </label>
-        <select>
-          {computers.map(computer => (
-            <option key={computer} onClick={() => computer}>
-              {this.computer} 
-            </option>
-          ))}
-        </select>
-      </form>
+      <>
+        <form onSubmit={this.handleSubmit}>
+          <label>Time to choose: </label>
+          <select value={this.state.value} onChange={this.updateSelection}>
+            <option>Pick an option </option>
+            {computers.map(computer => (
+              <option value={computer[0]} key={computer[0]}>
+                {computer[0] + " " + "(" + computer[1].year + ")"}
+              </option>
+            ))}
+          </select>
+          <input type="submit" value="I chose" />
+        </form>
+        {this.props.addedComputers.map(computer => (
+          <div key={computer.name}>
+            <ul>
+              <li>Name: {computer.name}</li>
+              <li>Manufacturer: {computer.manufacturer}</li>
+              <li>Year: {computer.year}</li>
+              <li>Origin: {computer.origin}</li>
+            </ul>
+          </div>
+        ))}
+      </>
     );
   }
 }
 
-// export default App;
+const mapStateToProps = state => {
+  return {
+    addedComputers: state
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addComputer: computer => dispatch(addComputer(computer))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DropdownMenu);
